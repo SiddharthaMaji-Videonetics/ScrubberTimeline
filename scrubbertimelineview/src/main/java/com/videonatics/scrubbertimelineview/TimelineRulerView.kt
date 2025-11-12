@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.OverScroller
 import androidx.core.view.doOnLayout
 import kotlin.math.*
+import androidx.core.content.withStyledAttributes
 
 /**
  * TimelineRulerView - Infinite scroll + pinch-to-zoom (playhead-anchored)
@@ -27,9 +28,11 @@ class TimelineRulerView @JvmOverloads constructor(
     // Paints
     private val paintTick = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.GRAY; strokeWidth = 2f }
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.DKGRAY; textSize = 28f }
-    private val paintPlayhead = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.RED; strokeWidth = 4f }
+    private var paintPlayhead = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.RED; strokeWidth = 4f }
     private val paintBar = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
 
+    //-----bar-------
+    private var barHeight = height.toFloat()
     // Time units
     private val YEAR_MS = 365L * 24 * 60 * 60 * 1000
     private val DAY_MS = 24L * 60 * 60 * 1000
@@ -151,6 +154,16 @@ class TimelineRulerView @JvmOverloads constructor(
     }
 
     init {
+        if (attrs != null) {
+            context.withStyledAttributes(attrs, R.styleable.TimelineRulerView) {
+                paintPlayhead.color =
+                    getColor(R.styleable.TimelineRulerView_playheadColor, paintPlayhead.color)
+
+                barHeight = getDimension(R.styleable.TimelineRulerView_barHeight, height.toFloat())
+                paintTick.color = getColor(R.styleable.TimelineRulerView_tickColor, paintTick.color)
+            }
+        }
+
         isFocusable = true
         isClickable = true
         // set initial pxPerMs when view size becomes available
@@ -213,8 +226,8 @@ class TimelineRulerView @JvmOverloads constructor(
         drawTicks(canvas, visibleStartMs, visibleEndMs, lineY)
 
         // draw playhead: centerX
-        val playheadX = w / 2f
-        canvas.drawLine(playheadX, 0f, playheadX, h, paintPlayhead)
+        val playheadX = w - (w / 3f)
+        canvas.drawLine(playheadX, h - barHeight, playheadX, h, paintPlayhead)
     }
 
     private fun drawTicks(canvas: Canvas, visibleStartMs: Long, visibleEndMs: Long, lineY: Float) {

@@ -14,8 +14,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:playheadColor="@android:color/holo_red_dark"
+        app:playheadColor="#007594"
         app:textSize="14sp"
-        app:tickColor="@android:color/darker_gray" />
+        app:barHeight="60dp"
+        app:tickColor="#005F51" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
